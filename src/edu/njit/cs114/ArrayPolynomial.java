@@ -3,6 +3,7 @@ package edu.njit.cs114;
 import java.util.Arrays;
 import java.util.Iterator;
 
+
 /**
  * Author: Ravi Varadarajan
  * Date created: 1/24/2024
@@ -41,8 +42,9 @@ public class ArrayPolynomial extends AbstractPolynomial {
         /**
          * Complete code here for lab assignment
          */
-        for (int i = 0; i < another.degree(); i++) {
-        addTerm(i, another.coefficient(i));
+        //Goes through the array and adds the coefficients to the new array
+        for (int i = 0; i <= another.degree(); i++) {
+            addTerm(i,another.coefficient(i));
         }
 
     }
@@ -53,14 +55,24 @@ public class ArrayPolynomial extends AbstractPolynomial {
          * Complete code here for lab assignment
          * Make sure you check power for validity !!
          */
+
+        //If power is negative throws exception
         if (power < 0 ){
             throw new Exception("Negative Power");
-        } else if (coefficient ==  0){
-            return;
-        } else if (power > coefficients.length - 1 ) {
-            coefficients = Arrays.copyOf(coefficients, power + 1);
-            coefficients[power] = coefficient;
         }
+        //if power is 0 exits function
+        if (coefficient ==  0){
+            return;
+        }
+        //Creates a new coefficients array and copys the past array into it
+        //if the power is larger than the length of coefficients
+        if (power > coefficients.length - 1 ) {
+            coefficients = Arrays.copyOf(coefficients, power + 1);
+
+        }
+
+        //if the power already has a coefficient adds the new and old coefficient together
+        coefficients[power] += coefficient;
 
     }
 
@@ -79,9 +91,11 @@ public class ArrayPolynomial extends AbstractPolynomial {
          * Complete code here for lab assignment
          * In case of non-existent power (including negative power) return zero value
          */
+        //checks for non-existent power and if power is negative else returns coefficient
         if (power < 0 || power >= coefficients.length){
         return 0;
         }
+
         return coefficients[power];
     }
 
@@ -90,11 +104,10 @@ public class ArrayPolynomial extends AbstractPolynomial {
         /**
          * Complete code here for lab assignment
          */
+        //Goes through the array and returns the highest power
         for (int power = coefficients.length-1; power >= 0; power--) {
             if (coefficients[power] != 0) {
                 return power;
-            } else {
-                break;
             }
         }
         return 0;

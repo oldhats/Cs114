@@ -116,29 +116,29 @@ public class ArrayStudy {
  */
 
 //Loop through each column and replace all negative values with column average
-        for (int i = 0; i < b.length; i++) {
-            if (b[i][j] < 0) {
-                b[i][j] = columnAverage;
+            for (int i = 0; i < b.length; i++) {
+                if (b[i][j] < 0) {
+                    b[i][j] = columnAverage;
+                }
             }
-        }
 
 
         }
 
-            return b;
-        }
+        return b;
+    }
 
-        //-----------------------------------------------------------------
+    //-----------------------------------------------------------------
 //
 //-----------------------------------------------------------------
-        public static void main (String[]args){
-            double[][] a = {{-1, 4, 3, 2, -3, 2}, {-2, 3, 5, -4, 0, 1}, {-1, -3, -4, 1, -1, 0}, {-1, 2, -
-                    3, 6, 5, 3}, {-3, 2, -3, -5, 0, 0}}; //A 5 x 6 Dimension;
-            System.out.println("Printing input array...");
-            printArray(a);
-            double[][] b = manipulate(a, 0.5);
-            b = manipulate(a, 0.6);
-            System.out.println("Printing original array...");
-            printArray(a);
-        }
+    public static void main (String[]args){
+        double[][] a = {{-1, 4, 3, 2, -3, 2}, {-2, 3, 5, -4, 0, 1}, {-1, -3, -4, 1, -1, 0}, {-1, 2, -
+                3, 6, 5, 3}, {-3, 2, -3, -5, 0, 0}}; //A 5 x 6 Dimension;
+        System.out.println("Printing input array...");
+        printArray(a);
+        double[][] b = manipulate(a, 0.5);
+        b = manipulate(a, 0.6);
+        System.out.println("Printing original array...");
+        printArray(a);
     }
+}
