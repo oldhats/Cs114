@@ -82,6 +82,13 @@ public class ArrayPolynomial extends AbstractPolynomial {
          * Complete code here for homework
          * In case of non-existent power (including negative power) return zero term
          */
+        //checks for non-existent power and if power is negative else returns the term
+        if (power < 0 || power >= coefficients.length){
+            return new PolynomialTerm(0,0);
+        }else if (coefficients[power] != 0){
+            return new PolynomialTerm(coefficients[power], power);
+        }
+
         return null;
     }
 
@@ -120,7 +127,14 @@ public class ArrayPolynomial extends AbstractPolynomial {
         /**
          * Complete code here for homework
          */
-        return value;
+
+        int factor = 1;
+        int sum = 0;
+        for(int power=0; power <= this.degree(); power++) {
+            sum += (int) (coefficient(power) * factor);
+            factor *= (int) point;
+        }
+        return sum;
     }
 
     @Override
@@ -129,6 +143,20 @@ public class ArrayPolynomial extends AbstractPolynomial {
         /**
          * Complete code here for homework
          */
+
+//        Go through the powers and find common powers then add terms
+//        find the highest power
+//        adding polynomials
+        try {
+            int maxDegree = Math.max(this.degree(),p.degree());
+            for (int power = maxDegree; power >= 0; power--){
+                result.addTerm(power, this.coefficient(power) + p.coefficient(power));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
         return result;
     }
 
@@ -138,6 +166,17 @@ public class ArrayPolynomial extends AbstractPolynomial {
         /**
          * Complete code here for homework
          */
+
+        //same thing as add but change use this this.coefficient[i] - p.coefficient[i]
+        try {
+            int maxDegree = Math.max(this.degree(),p.degree());
+            for (int power = maxDegree; power >= 0; power--){
+                result.addTerm(power, this.coefficient(power) - p.coefficient(power));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         return result;
     }
 
@@ -147,15 +186,43 @@ public class ArrayPolynomial extends AbstractPolynomial {
         /**
          * Complete code here for homework
          */
+        try {
+            for(int power1 = 0; power1 <= this.degree(); power1++){
+                {
+                    for (int power2 = 0; power2 <= p.degree(); power2++){
+                        result.addTerm(power1 + power2, this.coefficient(power1) * p.coefficient(power2));
+                    }
+                }
+            }
+        } catch (Exception e){
+            throw new RuntimeException(e);
+        }
+
         return result;
     }
 
     @Override
     public Polynomial divide(Polynomial p) throws Exception {
         Polynomial quotient = new ArrayPolynomial();
+        Polynomial dividend = this;
         /**
          * Complete code here for homework
          */
+        //find the largest power and subtract power from term being divided by p(x)
+        //then divide the coefficients
+        //subtract the powers then divide coefficients
+        //will look like this (power,coefficient) (1,2) then add that term to quotient
+        //multiply that term coefficient and power to residue formula (x)
+        //stop when residue power is smaller than the degree of power from dividing function
+
+        while (dividend.degree() >= p.degree()) {
+            int power = dividend.degree() - p.degree();
+            double coefficient = dividend.coefficient(dividend.degree()) / p.coefficient(p.degree());
+            quotient.addTerm(power, coefficient);
+            Polynomial temp = new ArrayPolynomial(power, coefficient);
+            dividend = dividend.subtract(p.multiply(temp));
+        }
+
         return quotient;
     }
 
@@ -166,6 +233,14 @@ public class ArrayPolynomial extends AbstractPolynomial {
         /**
          * Complete code here for homework extra-credit
          */
+
+        /*
+        this(x) = 2x^2 -3x +2
+        p(x) = 2x + 3
+        compose (p) = p(this(x))
+        substitute this(x) everywhere x is in p(x)
+        like evaluation function instead of numbers use polynomials
+        * */
         return result;
     }
 
@@ -242,8 +317,8 @@ public class ArrayPolynomial extends AbstractPolynomial {
         assert p2.degree() == 4;
         assert p2.coefficient(2) == -2.5;
         assert p2.toString().equals("3.600x^4 + 2.500x^3 - 2.500x^2 + 3.600");
-//        System.out.println("p2(1) = " + p2.evaluate(1));
-//        assert Math.abs(p2.evaluate(1)-7.2) <= 0.001;
+        System.out.println("p2(1) = " + p2.evaluate(1));
+        assert Math.abs(p2.evaluate(1)-7.2) <= 0.001;
         Polynomial p3 = new ArrayPolynomial(0, -4);
         p3.addTerm(5,3);
         p3.addTerm(5,-1);
@@ -251,18 +326,18 @@ public class ArrayPolynomial extends AbstractPolynomial {
         assert p3.degree() == 5;
         assert p3.coefficient(5) == 2;
         assert p3.coefficient(0) == -4;
-//        System.out.println("p3(2) = " + p3.evaluate(2));
-//        assert Math.abs(p3.evaluate(2)-60) <= 0.001;
+        System.out.println("p3(2) = " + p3.evaluate(2));
+        assert Math.abs(p3.evaluate(2)-60) <= 0.001;
         Polynomial p21 = new ArrayPolynomial(p2);
         System.out.println("p21(x) = " + p21);
         assert p21.equals(p2);
-//        PolynomialTerm t1 = p21.removeTerm(4);
-//        assert t1.getCoefficient()== 3.6;
-//        assert t1.getPower() == 4;
-//        System.out.println("p21(x) = " + p21);
-//        assert !p21.equals(p2);
-//        assert p21.coefficient(4) == 0;
-//        assert p21.degree() == 3;
+        PolynomialTerm t1 = p21.removeTerm(4);
+        assert t1.getCoefficient()== 3.6;
+        assert t1.getPower() == 4;
+        System.out.println("p21(x) = " + p21);
+        assert !p21.equals(p2);
+        assert p21.coefficient(4) == 0;
+        assert p21.degree() == 3;
         try {
             Polynomial p5 = new ArrayPolynomial(-5, 4);
             assert false;
@@ -270,30 +345,30 @@ public class ArrayPolynomial extends AbstractPolynomial {
             // Exception expected
             assert true;
         }
-//        System.out.println("p2(x) + p3(x) = " + p2.add(p3));
-//        Polynomial result = p2.add(p3);
-//        assert result.degree() == 5;
-//        assert Math.abs(result.coefficient(5) - 2) <= 0.0001;;
-//        System.out.println("p2(x) - p3(x) = " +p2.subtract(p3));
-//        result = p2.subtract(p3);
-//        assert result.degree() == 5;
-//        assert Math.abs(result.coefficient(5) - -2) <= 0.0001;
-//        assert Math.abs(result.coefficient(0) - 7.6) <= 0.0001;
-//        System.out.println("p2(x) * p3(x) = " +p2.multiply(p3));
-//        result = p2.multiply(p3);
-//        assert result.degree() == 9;
-//        assert Math.abs(result.coefficient(9) - 7.2) <= 0.0001;
-//        assert Math.abs(result.coefficient(5) - 7.2) <= 0.0001;
-//        assert Math.abs(result.coefficient(0) - -14.4) <= 0.0001;
-//        assert Math.abs(p2.evaluate(1) * p3.evaluate(1) - result.evaluate(1)) <= 0.0001;
-//        result = result.divide(p3);
-//        System.out.println("p2(x) * p3(x) / p3(x) = " + result);
-//        assert result.degree() == p2.degree();
-//        assert Math.abs(result.coefficient(4) - p2.coefficient(4)) <= 0.0001;
-//        assert Math.abs(result.coefficient(3) - p2.coefficient(3)) <= 0.0001;
-//        assert Math.abs(result.coefficient(2) - p2.coefficient(2)) <= 0.0001;
-//        assert Math.abs(result.coefficient(1) - p2.coefficient(1)) <= 0.0001;
-//        assert Math.abs(result.coefficient(0) - p2.coefficient(0)) <= 0.0001;
+        System.out.println("p2(x) + p3(x) = " + p2.add(p3));
+        Polynomial result = p2.add(p3);
+        assert result.degree() == 5;
+        assert Math.abs(result.coefficient(5) - 2) <= 0.0001;;
+        System.out.println("p2(x) - p3(x) = " +p2.subtract(p3));
+        result = p2.subtract(p3);
+        assert result.degree() == 5;
+        assert Math.abs(result.coefficient(5) - -2) <= 0.0001;
+        assert Math.abs(result.coefficient(0) - 7.6) <= 0.0001;
+        System.out.println("p2(x) * p3(x) = " +p2.multiply(p3));
+        result = p2.multiply(p3);
+        assert result.degree() == 9;
+        assert Math.abs(result.coefficient(9) - 7.2) <= 0.0001;
+        assert Math.abs(result.coefficient(5) - 7.2) <= 0.0001;
+        assert Math.abs(result.coefficient(0) - -14.4) <= 0.0001;
+        assert Math.abs(p2.evaluate(1) * p3.evaluate(1) - result.evaluate(1)) <= 0.0001;
+        result = result.divide(p3);
+        System.out.println("p2(x) * p3(x) / p3(x) = " + result);
+        assert result.degree() == p2.degree();
+        assert Math.abs(result.coefficient(4) - p2.coefficient(4)) <= 0.0001;
+        assert Math.abs(result.coefficient(3) - p2.coefficient(3)) <= 0.0001;
+        assert Math.abs(result.coefficient(2) - p2.coefficient(2)) <= 0.0001;
+        assert Math.abs(result.coefficient(1) - p2.coefficient(1)) <= 0.0001;
+        assert Math.abs(result.coefficient(0) - p2.coefficient(0)) <= 0.0001;
 
     }
 
