@@ -77,20 +77,19 @@ public class ArrayPolynomial extends AbstractPolynomial {
     }
 
     @Override
-    public PolynomialTerm removeTerm(int power) {
-        /**
-         * Complete code here for homework
-         * In case of non-existent power (including negative power) return zero term
-         */
-        //checks for non-existent power and if power is negative else returns the term
-        if (power < 0 || power >= coefficients.length){
-            return new PolynomialTerm(0,0);
-        }else if (coefficients[power] != 0){
-            return new PolynomialTerm(coefficients[power], power);
-        }
-
-        return null;
+public PolynomialTerm removeTerm(int power) {
+    //checks for non-existent power and if power is negative else returns the term
+    if (power < 0 || power >= coefficients.length){
+        return new PolynomialTerm(0,0);
+    } else {
+        // Save the term that is going to be removed
+        PolynomialTerm removedTerm = new PolynomialTerm(coefficients[power], power);
+        // Remove the term by setting its coefficient to zero
+        coefficients[power] = 0;
+        // Return the removed term
+        return removedTerm;
     }
+}
 
     @Override
     public double coefficient(int power) {
@@ -128,13 +127,11 @@ public class ArrayPolynomial extends AbstractPolynomial {
          * Complete code here for homework
          */
 
-        int factor = 1;
-        int sum = 0;
-        for(int power=0; power <= this.degree(); power++) {
-            sum += (int) (coefficient(power) * factor);
-            factor *= (int) point;
+        //Goes through the array and adds the value of the polynomial
+        for (int power = 0; power <= degree(); power++){
+            value += coefficients[power] * Math.pow(point,power);
         }
-        return sum;
+        return value;
     }
 
     @Override
@@ -204,7 +201,7 @@ public class ArrayPolynomial extends AbstractPolynomial {
     @Override
     public Polynomial divide(Polynomial p) throws Exception {
         Polynomial quotient = new ArrayPolynomial();
-        Polynomial dividend = this;
+        Polynomial divisor = new ArrayPolynomial(this);
         /**
          * Complete code here for homework
          */
@@ -215,14 +212,24 @@ public class ArrayPolynomial extends AbstractPolynomial {
         //multiply that term coefficient and power to residue formula (x)
         //stop when residue power is smaller than the degree of power from dividing function
 
-        while (dividend.degree() >= p.degree()) {
-            int power = dividend.degree() - p.degree();
-            double coefficient = dividend.coefficient(dividend.degree()) / p.coefficient(p.degree());
-            quotient.addTerm(power, coefficient);
-            Polynomial temp = new ArrayPolynomial(power, coefficient);
-            dividend = dividend.subtract(p.multiply(temp));
+
+
+        if ((p.degree() == 0) && (p.coefficient(0) == 0)) {
+            throw new RuntimeException("Division by zero");
         }
 
+        if (divisor.degree() < p.degree()) {
+            return new ArrayPolynomial(0,0);
+        }
+
+        double coefficient = divisor.coefficient((int) (divisor.degree() / (p.coefficient(p.degree()))));
+        int power = divisor.degree() - p.degree();
+        Polynomial dividend = new ArrayPolynomial(this);
+        Polynomial residue = divisor.subtract((p.multiply(dividend)).divide(p));
+        if (residue == null) {
+            residue = new ArrayPolynomial(0,0);
+        }
+        quotient = dividend.add(residue);
         return quotient;
     }
 
@@ -241,6 +248,8 @@ public class ArrayPolynomial extends AbstractPolynomial {
         substitute this(x) everywhere x is in p(x)
         like evaluation function instead of numbers use polynomials
         * */
+
+
         return result;
     }
 
