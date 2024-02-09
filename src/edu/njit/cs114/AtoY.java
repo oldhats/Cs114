@@ -19,7 +19,8 @@ public class AtoY {
     /**
      * Check if we can fill characters in the grid starting from ch in the cell (row,col)
      * The grid may already have some characters which should not be changed
-     * @param t grid
+     *
+     * @param t                      grid
      * @param row
      * @param col
      * @param ch
@@ -31,13 +32,56 @@ public class AtoY {
         /**
          * Complete code here
          */
+
         //check base case ch = 'y', return true
         //determine next char
-        int cInt = (int)ch;
-        char nextChar = (char) (cInt + 1);
         // check if nextChar is already in an adjacent cell to (row,col), if it is
         // call solve() recursively  with row,col corresponding to the cell where next
         // is and ch should be nextChar, if hte result is true, return true, else return false
+        t[row][col] = ch;
+        char nextChar = (char) (ch+1);
+
+        if (ch == 'y') {
+            return true;
+        }
+
+        if (ch == 'z'){
+            return false;
+        }
+
+        if (row < 4 && t[row + 1][col] != 'z') {
+            if (t[row + 1][col] == nextChar) {
+                if (solve(t, row + 1, col, nextChar, allowDiagonalNeighbors)) {
+                    return true;
+                }
+            }
+        }
+
+        if (row > 0 && row < 4 && t[row - 1][col] != 'z') {
+            if (t[row - 1][col] == nextChar) {
+                if (solve(t, row - 1, col, nextChar, allowDiagonalNeighbors)) {
+                    return true;
+                }
+            }
+        }
+
+        if (col < 4 && t[row][col + 1] != 'z') {
+            if (t[row][col + 1] == nextChar) {
+                if (solve(t, row, col + 1, nextChar, allowDiagonalNeighbors)) {
+                    return true;
+                }
+            }
+        }
+
+        if (col > 0 && col < 4 && t[row][col -1] != 'z') {
+            if (t[row][col -1 ] == nextChar) {
+                if (solve(t, row, col -1 , nextChar, allowDiagonalNeighbors)) {
+                    return true;
+                }
+            }
+        }
+
+
 
         // if nextChar is not in adjacent cell, (don't try to look for char in adjacent cell),
         // try to put nextChar in one of the free adjacent cells
@@ -45,10 +89,13 @@ public class AtoY {
         // and ch - nextChar, if result is true, return true, else t[x][y] = 'z'
         // repeat with another free adjacent cell
 
-        return false;
+
+    return false;
     }
 
-    public static boolean solve(char [] [] t, boolean allowDiagonalNeighbors) {
+
+
+    public static boolean solve(char[][] t, boolean allowDiagonalNeighbors) {
         int row = -1, col = -1;
         for (int i = 0; i < t.length; i++) {
             for (int j = 0; j < t[i].length; j++) {
@@ -67,19 +114,25 @@ public class AtoY {
              */
             for (int i = 0; i < t.length; i++) {
                 for (int j = 0; j < t[i].length; j++) {
-                    t[i][j] = 'a';
-                    if (solve(t, i, j, 'a', allowDiagonalNeighbors)) {
-                        return true;
-                    } else {
-                        t[i][j] = 'z';
+                    if (t[i][j] == 'z') {
+                        t[i][j] = 'a';
+                        if (solve(t, i, j, 'a', allowDiagonalNeighbors)) {
+                            return true;
+                        } else {
+                            return false;
+                        }
                     }
                 }
             }
-
         }
+        return false;
+    }
 
 
-    public static void main(String[] args) {
+
+
+
+    public static void main (String[]args){
         System.out.println("Enter 5 rows of lower-case letters a to z below. Note z indicates empty cell");
         Scanner sc = new Scanner(System.in);
         char[][] tbl = new char[5][5];
@@ -91,7 +144,7 @@ public class AtoY {
             }
         }
         System.out.println("Are diagonal neighbors included ? (true or false)");
-        if (solve(tbl,sc.nextBoolean())) {
+        if (solve(tbl, sc.nextBoolean())) {
             System.out.println("Printing the solution...");
             printTable(tbl);
         } else {
@@ -99,3 +152,4 @@ public class AtoY {
         }
     }
 }
+
