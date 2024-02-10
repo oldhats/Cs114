@@ -21,9 +21,10 @@ public class LabCashRegister {
         /**
          * Complete code here
          */
-        // check array using flag only make flag true if its one
+        // check if the array contains a coin of denomination 1
         boolean oneInArray = false;
 
+        // if it does, copy the array to the denominations array
         for (int denomination : denominations) {
             if (denomination == 1) {
                 oneInArray = true;
@@ -66,19 +67,22 @@ public class LabCashRegister {
         /**
          * Complete code
          */
+        // check if remaining value is 0
         if (startDenomIndex == denominations.length) {
             if (remainingValue == 0) {
                 return 0;
             }
-
+            // if remaining value is greater than 0, return infinity
             if (remainingValue > 0) {
                 return INFINITY;
             }
         }
 
+        // find the maximum number of coins for the current denomination
         int maxDenomCoins = remainingValue / denominations[startDenomIndex];
         int minCoins = INFINITY;
 
+        // try all possible number of coins for the current denomination
         for (int nCoins = 0; nCoins <= maxDenomCoins; nCoins++) {
             if (nCoins <= availableCoins[startDenomIndex]) {
                 int newRemainingValue = remainingValue - nCoins * denominations[startDenomIndex];
@@ -90,7 +94,7 @@ public class LabCashRegister {
             }
         }
 
-
+        // return the minimum number of coins needed to make change
         return minCoins == INFINITY ? INFINITY : minCoins;
     }
 
@@ -104,6 +108,7 @@ public class LabCashRegister {
      * @return
      */
     public int minimumCoinsForChange(int [] availableCoins, int value) {
+        // check if the value is greater than the total available coins
         int totalAvailable = 0;
         for (int i = 0; i < denominations.length; i++) {
             totalAvailable += denominations[i] * availableCoins[i];
