@@ -27,72 +27,45 @@ public class AtoY {
      * @param allowDiagonalNeighbors
      * @return true if characters can be filled in else false
      */
-    private static boolean solve(char[][] t, int row, int col, char ch,
-                                 boolean allowDiagonalNeighbors) {
-        /**
-         * Complete code here
-         */
+private static boolean solve(char[][] t, int row, int col, char ch, boolean allowDiagonalNeighbors) {
+    // Complete code here
+    // Base case
+    // If the character is 'y' then return true
+    t[row][col] = ch;
+    char nextChar = (char) (ch + 1);
 
-        //check base case ch = 'y', return true
-        //determine next char
-        // check if nextChar is already in an adjacent cell to (row,col), if it is
-        // call solve() recursively  with row,col corresponding to the cell where next
-        // is and ch should be nextChar, if hte result is true, return true, else return false
-        t[row][col] = ch;
-        char nextChar = (char) (ch+1);
+    if (ch == 'y') {
+        return true;
+    }
+    // Recursive case
 
-        if (ch == 'y') {
-            return true;
-        }
+    int[] rowOffsets = {-1, 0, 1, 0, -1, -1, 1, 1};
+    int[] colOffsets = {0, 1, 0, -1, -1, 1, -1, 1};
+    int maxOffset = allowDiagonalNeighbors ? 8 : 4;
+    // Check if the next character is present in the 8 directions
+    // If it is present then call the solve function recursively
+    for (int i = 0; i < maxOffset; i++) {
+        int newRow = row + rowOffsets[i];
+        int newCol = col + colOffsets[i];
 
-        if (ch == 'z'){
-            return false;
-        }
-
-        if (row < 4 && t[row + 1][col] != 'z') {
-            if (t[row + 1][col] == nextChar) {
-                if (solve(t, row + 1, col, nextChar, allowDiagonalNeighbors)) {
+        // Check if the new row and column are within the bounds of the grid
+        if (newRow >= 0 && newRow < 5 && newCol >= 0 && newCol < 5) {
+            if (t[newRow][newCol] == nextChar) {
+                if (solve(t, newRow, newCol, nextChar, allowDiagonalNeighbors)) {
                     return true;
                 }
-            }
-        }
-
-        if (row > 0 && row < 4 && t[row - 1][col] != 'z') {
-            if (t[row - 1][col] == nextChar) {
-                if (solve(t, row - 1, col, nextChar, allowDiagonalNeighbors)) {
+            } else if (t[newRow][newCol] == 'z') {
+                t[newRow][newCol] = nextChar;
+                if (solve(t, newRow, newCol, nextChar, allowDiagonalNeighbors)) {
                     return true;
                 }
+                t[newRow][newCol] = 'z';
             }
         }
-
-        if (col < 4 && t[row][col + 1] != 'z') {
-            if (t[row][col + 1] == nextChar) {
-                if (solve(t, row, col + 1, nextChar, allowDiagonalNeighbors)) {
-                    return true;
-                }
-            }
-        }
-
-        if (col > 0 && col < 4 && t[row][col -1] != 'z') {
-            if (t[row][col -1 ] == nextChar) {
-                if (solve(t, row, col -1 , nextChar, allowDiagonalNeighbors)) {
-                    return true;
-                }
-            }
-        }
-
-
-
-        // if nextChar is not in adjacent cell, (don't try to look for char in adjacent cell),
-        // try to put nextChar in one of the free adjacent cells
-        // cell say (x,y), t[x][y] = nextChar, call solve() recursively with row = x and col = y
-        // and ch - nextChar, if result is true, return true, else t[x][y] = 'z'
-        // repeat with another free adjacent cell
-
-
+    }
 
     return false;
-    }
+}
 
 
 
