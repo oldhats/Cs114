@@ -10,6 +10,8 @@ package edu.njit.cs114;
  */
 
 
+import java.util.Objects;
+
 /**
  * Author: Ravi Varadarajan
  * Date created: 2/14/2024
@@ -147,7 +149,27 @@ public class DynamicDoubleArray {
         /**
          * Complete code here for homework
          */
-        return 0.0; // to be removed once code is completed
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Invalid index");
+        }
+
+        // var for element we are removing
+        Double removedElement = arr[index];
+
+
+        // for loop that gives the element at the specified index a null value
+        // then shifts all elements with positions higher than the index to the left
+        for (int i = index; i < arr.length; i++) {
+            if(Objects.equals(arr[i], removedElement)) {
+                arr[i] = null;
+            } else {
+                arr[i - 1] = arr[i];
+            }
+        }
+
+
+
+        return removedElement;
     }
 
     /**
@@ -162,7 +184,35 @@ public class DynamicDoubleArray {
         /**
          * Complete code here for homework
          */
-        return 0.0; // to be removed once code is completed
+
+        // The last element in the array given to removedElement
+        Double removedElement = arr[arr.length - 1];
+
+        if (removedElement == null) {
+            int i = 1;
+            i++;
+            removedElement = arr[arr.length - i];
+        }
+
+
+
+        // New arr with one less index
+        Double [] newArr = new Double [arr.length - 1];
+
+
+        // For loop that checks if the element in the array is the removedElement if so
+        // skips over that element
+        for (int i = 0; i < arr.length; i++){
+            if(!Objects.equals(arr[i], removedElement)){
+                newArr[i] = arr[i];
+            }
+        }
+
+
+        this.arr = newArr;
+
+
+        return removedElement;
     }
 
     /**
@@ -250,43 +300,43 @@ public class DynamicDoubleArray {
         System.out.println("array of size " + arr.size() + " : " + arr);
         assert arr.size() == 5;
         /*     Uncomment the following for homework 4 */
-//        double removedVal = arr.remove(0);
-//        System.out.println("Removed element at position 0 = " + removedVal);
-//        System.out.println("array of size " + arr.size()+ " : " + arr);
-//        assert removedVal == 8.5;
-//        assert arr.size() == 4;
-//        removedVal = arr.remove(2);
-//        System.out.println("Removed element at position 2 = " + removedVal);
-//        System.out.println("array of size " + arr.size()+ " : " + arr);
-//        assert removedVal == 12.1;
-//        assert arr.size() == 3;
-//        removedVal = arr.remove(2);
-//        System.out.println("Removed element at position 2 = " + removedVal);
-//        System.out.println("array of size " + arr.size()+ " : " + arr);
-//        assert removedVal == -5.7;
-//        assert arr.size() == 2;
-//        removedVal = arr.remove();
-//        System.out.println("Removed element at end = " + removedVal);
-//        System.out.println("array of size " + arr.size()+ " : " + arr);
-//        assert removedVal == 25;
-//        assert arr.size() == 1;
-//        removedVal = arr.remove();
-//        System.out.println("Removed element at end = " + removedVal);
-//        System.out.println("array of size " + arr.size()+ " : " + arr);
-//        assert removedVal == 4.9;
-//        assert arr.size() == 0;
-//        arr.add(67);
-//        arr.add(-14);
-//        arr.add(15);
-//        System.out.println("array of size " + arr.size()+ " : " + arr);
-//        assert arr.size == 3;
-//        arr.add(9.5);
-//        arr.add(-14);
-//        arr.add(22);
-//        assert arr.size == 6;
-//        arr.removeRange(2,5);
-//        System.out.println("array of size " + arr.size()+ " : " + arr);
-//        assert arr.size == 3;
+        double removedVal = arr.remove(0);
+        System.out.println("Removed element at position 0 = " + removedVal);
+        System.out.println("array of size " + arr.size()+ " : " + arr);
+        assert removedVal == 8.5;
+        assert arr.size() == 4;
+        removedVal = arr.remove(2);
+        System.out.println("Removed element at position 2 = " + removedVal);
+        System.out.println("array of size " + arr.size()+ " : " + arr);
+        assert removedVal == 12.1;
+        assert arr.size() == 3;
+        removedVal = arr.remove(2);
+        System.out.println("Removed element at position 2 = " + removedVal);
+        System.out.println("array of size " + arr.size()+ " : " + arr);
+        assert removedVal == -5.7;
+        assert arr.size() == 2;
+        removedVal = arr.remove();
+        System.out.println("Removed element at end = " + removedVal);
+        System.out.println("array of size " + arr.size()+ " : " + arr);
+        assert removedVal == 25;
+        assert arr.size() == 1;
+        removedVal = arr.remove();
+        System.out.println("Removed element at end = " + removedVal);
+        System.out.println("array of size " + arr.size()+ " : " + arr);
+        assert removedVal == 4.9;
+        assert arr.size() == 0;
+        arr.add(67);
+        arr.add(-14);
+        arr.add(15);
+        System.out.println("array of size " + arr.size()+ " : " + arr);
+        assert arr.size == 3;
+        arr.add(9.5);
+        arr.add(-14);
+        arr.add(22);
+        assert arr.size == 6;
+        arr.removeRange(2,5);
+        System.out.println("array of size " + arr.size()+ " : " + arr);
+        assert arr.size == 3;
         int[] nItemsArr = new int[]{0, 100000, 200000, 400000, 800000, 1600000, 3200000};
         DynamicDoubleArray arr1 = new DynamicDoubleArray();
         System.out.println("Using initial array capacity of 1...");
@@ -319,17 +369,17 @@ public class DynamicDoubleArray {
                     +totalTime);
         }
         /* Uncomment the following for homework 4 */
-//        totalTime = 0;
-//        for (int k=1; k < nItemsArr.length; k++) {
-//            for (int i = 0; i < nItemsArr[k]-nItemsArr[k-1]; i++) {
-//                long startTime = System.currentTimeMillis();
-//                arr1.remove();
-//                long stopTime = System.currentTimeMillis();
-//                totalTime += (stopTime - startTime);
-//            }
-//            System.out.println("total time(ms) for deleting " + nItemsArr[k] + " items = " +
-//                    + totalTime);
-//        }
+        totalTime = 0;
+        for (int k=1; k < nItemsArr.length; k++) {
+            for (int i = 0; i < nItemsArr[k]-nItemsArr[k-1]; i++) {
+                long startTime = System.currentTimeMillis();
+                arr1.remove();
+                long stopTime = System.currentTimeMillis();
+                totalTime += (stopTime - startTime);
+            }
+            System.out.println("total time(ms) for deleting " + nItemsArr[k] + " items = " +
+                    + totalTime);
+        }
     }
 
 }
