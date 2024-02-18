@@ -17,19 +17,69 @@ public class CashRegister {
      * @param denominations values of coin types not in any order
      * @throws Exception when there are non positive or duplicate denomination values
      */
+
+
     public CashRegister(int [] denominations) throws Exception  {
-        /**
-         * Complete code here
-         */
+        // Check for non positive or duplicate denomination values
+        for (int i = 0; i < denominations.length; i++) {
+            if (denominations[i] <= 0) {
+                throw new Exception("Denomination values must be positive");
+            }
+            for (int j = i + 1; j < denominations.length; j++) {
+                if (denominations[i] == denominations[j]) {
+                    throw new Exception("Duplicate denomination values");
+                }
+            }
+        }
+        this.denominations = denominations; // Initialize denominations field
     }
+
+    public int[] makeChange(int startDenomIndex, int remainingValue, int[] availableCoins, int[] minCoinsToUse) {
+        if (startDenomIndex == denominations.length) {
+            if (remainingValue > 0) {
+                return makeCoinsArray(INFINITY);
+            } else if (remainingValue == 0) {
+                return makeCoinsArray(0);
+            }
+        } else {
+            int denomValue = denominations[startDenomIndex];
+            if (denomValue == 0) {
+                throw new ArithmeticException("Denomination value cannot be zero");
+            }
+            int maxCoinsForStartDenom = Math.min(availableCoins[startDenomIndex], remainingValue / denomValue);
+            int[] minCoinChanges = makeCoinsArray(INFINITY);
+            for (int i = minCoinsToUse[startDenomIndex]; i <= maxCoinsForStartDenom; i++) {
+                int[] minRemCoinChanges = makeChange(startDenomIndex + 1, remainingValue - i * denomValue, availableCoins, minCoinsToUse);
+                if (numCoins(minRemCoinChanges) != INFINITY && i + numCoins(minRemCoinChanges) < numCoins(minCoinChanges)) {
+                    minCoinChanges = Arrays.copyOf(minRemCoinChanges, minRemCoinChanges.length);
+                    minCoinChanges[startDenomIndex] = i;
+                }
+            }
+            return minCoinChanges;
+        }
+        return null; // This line will never be reached, but is required to satisfy the Java compiler.
+    }
+
+    // ... other code ...
+
+
 
     // make an array of same size as denominations array with each entry equal to nCoins
     public int [] makeCoinsArray(int nCoins) {
         int [] changes = new int[denominations.length];
-        for (int i=0; i < changes.length; i++) {
-            changes[i] = nCoins;
-        }
+        Arrays.fill(changes, nCoins);
         return changes;
+    }
+
+    private int numCoins(int [] changeCoins) {
+        int sum = 0;
+        for (int i=0; i < changeCoins.length; i++) {
+            if (changeCoins[i] == INFINITY) {
+                return INFINITY;
+            }
+            sum += changeCoins[i];
+        }
+        return sum;
     }
 
     /**
@@ -48,8 +98,14 @@ public class CashRegister {
         /**
          * Complete code here
          */
-        return availableCoins;
+
+        int[] change = makeChange(0, value, availableCoins, minCoinsToUse);
+        if (numCoins(change) == INFINITY) {
+            return makeCoinsArray(INFINITY);
+        }
+        return change;
     }
+
 
 
     /**
