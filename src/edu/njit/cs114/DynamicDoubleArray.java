@@ -44,6 +44,7 @@ public class DynamicDoubleArray {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Invalid index");
         }
+
         size++;
         if (size == arr.length){
             expandArray();
@@ -92,9 +93,9 @@ public class DynamicDoubleArray {
         if (size == arr.length) {
             expandArray();
         }
+
         size++;
         arr[size - 1] = elem;
-
     }
 
     /**
@@ -154,22 +155,21 @@ public class DynamicDoubleArray {
         }
 
         // var for element we are removing
-        Double removedElement = arr[index];
+        Double removedVal = arr[index];
 
 
-        // for loop that gives the element at the specified index a null value
+
         // then shifts all elements with positions higher than the index to the left
-        for (int i = index; i < arr.length; i++) {
-            if(Objects.equals(arr[i], removedElement)) {
-                arr[i] = null;
-            } else {
-                arr[i - 1] = arr[i];
-            }
+        for (int i = index; i < size - 1; i++) {
+            arr[i] = arr[i + 1];
         }
+        contractArray();
 
 
 
-        return removedElement;
+
+
+        return removedVal;
     }
 
     /**
@@ -185,35 +185,35 @@ public class DynamicDoubleArray {
          * Complete code here for homework
          */
 
-        // The last element in the array given to removedElement
-        Double removedElement = arr[arr.length - 1];
+        // last element in arr is given to removedElement
+        Double removedVal = arr[size - 1];
 
-        if (removedElement == null) {
-            int i = 1;
-            i++;
-            removedElement = arr[arr.length - i];
-        }
+        arr[size - 1] = null;
 
+        size--;
+        contractArray();
 
 
-        // New arr with one less index
-        Double [] newArr = new Double [arr.length - 1];
-
-
-        // For loop that checks if the element in the array is the removedElement if so
-        // skips over that element
-        for (int i = 0; i < arr.length; i++){
-            if(!Objects.equals(arr[i], removedElement)){
-                newArr[i] = arr[i];
-            }
-        }
-
-
-        this.arr = newArr;
-
-
-        return removedElement;
+        return removedVal;
     }
+
+
+    // Contracts the array if the size is less than the array length divided by 4
+    // if so creates an array of half the size if that size is not a whole number
+    // we take the next whole number
+    public void contractArray() {
+
+        if (size <= arr.length / 4) {
+            Double[] newHalfArr = new Double[(int) Math.ceil(arr.length / 2.0)];
+            for (int i = 0; i < size; i++) {
+                newHalfArr[i] = arr[i];
+                nCopies++;
+            }
+            this.arr = newHalfArr;
+        }
+    }
+
+
 
     /**
      * Removes from this list all of the elements whose index is between fromIndex,
@@ -228,6 +228,9 @@ public class DynamicDoubleArray {
         /**
          * Complete code here for homework
          */
+
+        // each time you finsih logic for these functions then
+        //craet if statement and call contact array function
     }
 
     /**
