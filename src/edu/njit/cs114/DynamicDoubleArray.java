@@ -46,15 +46,17 @@ public class DynamicDoubleArray {
             throw new IndexOutOfBoundsException("Invalid index");
         }
 
+        // adds to the size of the array
         size++;
         if (size == arr.length){
             expandArray();
         }
-
+//       if (size == arr.length) {
         for (int i = size - 1; i >= index; i--) {
             arr[i + 1] = arr[i];
         }
 
+        // adds the element to the index
         arr[index] = elem;
         /**
          * Complete code here for the lab
@@ -70,6 +72,8 @@ public class DynamicDoubleArray {
          */
         Double [] newArr = new Double [(2 * arr.length)];
 
+
+        // for loop that adds the elements from the old array to the new array
         for (int i = 0; i < arr.length; i++) {
             newArr[i] = arr[i];
             nCopies++;
@@ -91,11 +95,15 @@ public class DynamicDoubleArray {
          * Complete code here for the lab
          */
 
+        // if the size is equal to the length of the array
         if (size == arr.length) {
             expandArray();
         }
 
+        // adds the element to the end of the array
         size++;
+
+        // adds the element to the end of the array
         arr[size - 1] = elem;
     }
 
@@ -114,7 +122,9 @@ public class DynamicDoubleArray {
             throw new IndexOutOfBoundsException("Invalid index");
         }
 
+        // var for the old value at the index
         Double oldVal = arr[index];
+        // sets the element at the index to the new element
         arr[index] = elem;
 
 
@@ -135,6 +145,7 @@ public class DynamicDoubleArray {
             throw new IndexOutOfBoundsException("Invalid index");
         }
 
+        // gets the element at the index
         Double gotIndex = arr[index];
 
         return gotIndex;
@@ -270,9 +281,20 @@ public class DynamicDoubleArray {
          * Complete code here for homework
          */
 
-        if (minCapacity > arr.length) {
+        // if the minCapacity is greater than the length of the array
+        if (minCapacity >= arr.length) {
+            Double [] newArr = new Double[(minCapacity)];
+            for (int i = 0; i <= arr.length; i++) {
+                newArr[i] = arr[i];
+                nCopies++;
+            }
 
+            this.arr = newArr;
         }
+
+        contractArray();
+
+
     }
 
     /**
@@ -282,6 +304,17 @@ public class DynamicDoubleArray {
         /**
          * Complete code here for homework
          */
+        // creates a new array with the size of the elements in the array
+        Double [] newArr = new Double[(size)];
+
+        // for loop that adds the elements from the old array to the new array
+        for (int i = 0; i < size; i++) {
+            newArr[i] = arr[i];
+            nCopies++;
+        }
+
+        this.arr = newArr;
+
     }
 
     /**
