@@ -285,8 +285,8 @@ public class DynamicDoubleArray {
 
         // if the minCapacity is greater than the length of the array
         if (minCapacity >= arr.length) {
-            Double [] newArr = new Double[(minCapacity + 1)];
-            for (int i = 0; i <= arr.length; i++) {
+            Double [] newArr = new Double[(minCapacity)];
+            for (int i = 0; i <= size; i++) {
                 newArr[i] = arr[i];
                 nCopies++;
             }
@@ -294,7 +294,6 @@ public class DynamicDoubleArray {
             this.arr = newArr;
         }
 
-        contractArray();
 
 
     }
