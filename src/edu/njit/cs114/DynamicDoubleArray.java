@@ -23,6 +23,7 @@ public class DynamicDoubleArray {
     private Double [] arr;
     private int size;
     // keeps track of number of element copies made during array expansion or contraction
+    // how many elements are present in the array ignoring null values
     private int nCopies;
 
     public DynamicDoubleArray(int initialCapacity) {
@@ -160,9 +161,14 @@ public class DynamicDoubleArray {
 
 
         // then shifts all elements with positions higher than the index to the left
-        for (int i = index; i < size - 1; i++) {
+        for (int i = index; i <= size - 1; i++) {
             arr[i] = arr[i + 1];
+            nCopies++;
         }
+
+        // subtract size since we are removing an element from the arr
+        size--;
+
         contractArray();
 
 
@@ -188,8 +194,10 @@ public class DynamicDoubleArray {
         // last element in arr is given to removedElement
         Double removedVal = arr[size - 1];
 
+        // gives the last element in the arr a null value
         arr[size - 1] = null;
 
+        // subtract from the size since we are removing an element from the arr
         size--;
         contractArray();
 
@@ -216,7 +224,7 @@ public class DynamicDoubleArray {
 
 
     /**
-     * Removes from this list all of the elements whose index is between fromIndex,
+     * Removes from this list all the elements whose index is between fromIndex,
      * inclusive, and toIndex, exclusive.
      * Shifts any succeeding elements to the left (reduces their index).
      * This call shortens the list by (toIndex - fromIndex) elements.
@@ -228,9 +236,28 @@ public class DynamicDoubleArray {
         /**
          * Complete code here for homework
          */
+        // checks if fromIndex or toIndex is out of range
+        if (fromIndex < 0 || fromIndex >= size() || toIndex > size() || toIndex < fromIndex) {
+            throw new IndexOutOfBoundsException("Invalid index");
+        }
 
-        // each time you finsih logic for these functions then
-        //craet if statement and call contact array function
+        // for loop that shifts all elements from the fromIndex to
+        // removes an element from the arr each time
+        for (int i = fromIndex; i < toIndex; i++){
+            arr[i] = arr[i + (toIndex - 1)];
+            nCopies++;
+        }
+
+        // getting the total size(elements) of the array
+        size = size - (toIndex - fromIndex);
+
+        contractArray();
+
+
+
+
+        // each time you finish logic for these functions then
+        //create if statement and call contact array function
     }
 
     /**
@@ -242,6 +269,10 @@ public class DynamicDoubleArray {
         /**
          * Complete code here for homework
          */
+
+        if (minCapacity > arr.length) {
+
+        }
     }
 
     /**
