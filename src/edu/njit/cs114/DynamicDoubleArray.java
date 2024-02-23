@@ -252,12 +252,14 @@ public class DynamicDoubleArray {
             throw new IndexOutOfBoundsException("Invalid index");
         }
 
-        // for loop that shifts all elements from the fromIndex to
-        // removes an element from the arr each time
-        for (int i = fromIndex; i < toIndex; i++){
-            arr[i] = arr[i + (toIndex - 1)];
+
+        // for loop that shifts all elements from the toIndex to the left
+        for (int i = toIndex; i < size; i++) {
+            arr[i - (toIndex - fromIndex)] = arr[i];
             nCopies++;
         }
+
+
 
         // getting the total size(elements) of the array
         size = size - (toIndex - fromIndex);
@@ -283,7 +285,7 @@ public class DynamicDoubleArray {
 
         // if the minCapacity is greater than the length of the array
         if (minCapacity >= arr.length) {
-            Double [] newArr = new Double[(minCapacity)];
+            Double [] newArr = new Double[(minCapacity + 1)];
             for (int i = 0; i <= arr.length; i++) {
                 newArr[i] = arr[i];
                 nCopies++;
