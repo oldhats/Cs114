@@ -174,7 +174,6 @@ public class DynamicDoubleArray {
         // then shifts all elements with positions higher than the index to the left
         for (int i = index; i <= size - 1; i++) {
             arr[i] = arr[i + 1];
-            nCopies++;
         }
 
         // subtract size since we are removing an element from the arr
@@ -282,17 +281,21 @@ public class DynamicDoubleArray {
         /**
          * Complete code here for homework
          */
+        contractArray();
+
 
         // if the minCapacity is greater than the length of the array
-        if (minCapacity >= arr.length) {
+        if (minCapacity > arr.length) {
             Double [] newArr = new Double[(minCapacity)];
-            for (int i = 0; i <= size; i++) {
+            for (int i = 0; i < size; i++) {
                 newArr[i] = arr[i];
                 nCopies++;
             }
 
+
             this.arr = newArr;
         }
+
 
 
 
