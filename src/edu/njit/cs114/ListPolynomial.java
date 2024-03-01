@@ -182,6 +182,22 @@ public class ListPolynomial extends AbstractPolynomial {
 
         termList.add(newTerm);
 
+        /*
+        * ListIterator<PolynomialTerm> iter termList.listIterator;
+        * while (iter.hasNext()){
+        *   PolynomialTerm term = iter.next();
+        *   if ((term.getPower) > power) {
+        *       continue;
+        *   } elif (term.getPower() < power){
+        *       iter.previous();
+        *       iter.add(new PolynomialTerm(coefficient, power));
+        *   } elif (term.getPower() == power){
+        *       double newCoefficient = term.get-coefficient + coefficient
+        *       iter.remove();
+        *   }
+        * }
+        * */
+
     }
 
     /**
@@ -194,7 +210,29 @@ public class ListPolynomial extends AbstractPolynomial {
         /**
          * Complete the code for homework
          */
-        return new PolynomialTerm(0, power); // to be removed if necessary
+
+        //Must use list iterator
+
+        for (PolynomialTerm term: termList){
+
+            // Keep track of index
+            int index = 0;
+
+            /*
+            * If the power of the term is equal to the power
+            * we are looking for, remove the term and return it
+            * */
+            if (term.getPower() == power){
+                PolynomialTerm termToBeRemoved = new PolynomialTerm(termList.get(index).getCoefficient(), power);
+                termList.remove(index);
+                return termToBeRemoved;
+            }
+            index ++;
+        }
+
+
+        // If the power is not found, return a zero term
+        return new PolynomialTerm (0, power); // to be removed if necessary
     }
 
     /**
@@ -207,7 +245,47 @@ public class ListPolynomial extends AbstractPolynomial {
         /**
          * Complete the code for homework
          */
-        return 0; // to be removed if necessary
+
+/*        int index = 0;
+        double result = 0;
+        double power = 0;
+        double coefficient = 0;
+
+        for (PolynomialTerm term: termList) {
+            double pointRaisedToPower = 0;
+            for(int i = 0; i < point; i++){
+                pointRaisedToPower *= point;
+            }
+            power = term.getPower();
+            coefficient = term.getCoefficient();
+            result = result + ((pointRaisedToPower)*(coefficient));
+        }*/
+
+        // Create a descending iterator
+        Iterator<PolynomialTerm> polyIter = ((LinkedList) termList).descendingIterator();
+
+        // Initialize the sum, power value, and last term power
+        double sum = 0.0;
+        int lastTermPower = 0;
+        double powerVal = 1;
+
+        // Iterate through the list of terms
+        while(polyIter.hasNext()){
+            PolynomialTerm term = polyIter.next();
+
+            // Calculate the power value
+            for(int i = 0; i < (term.getPower()-lastTermPower); i++){
+                powerVal *= point;
+            }
+            // Add the term to the sum
+            sum += term.getCoefficient() * powerVal;
+            // Reset the power value
+            lastTermPower = term.getPower();
+        }
+
+
+        // Return the sum
+        return sum;
     }
 
     /**
@@ -220,6 +298,26 @@ public class ListPolynomial extends AbstractPolynomial {
         /**
          * Complete the code for homework
          */
+
+        ListPolynomial result = new ListPolynomial();
+
+        Iterator<PolynomialTerm> iter1 = this.getIterator();
+        Iterator<PolynomialTerm> iter2 = p.getIterator();
+
+        PolynomialTerm term1 = iter1.hasNext() ? iter1.next() : null;
+        PolynomialTerm term2 = iter2.hasNext() ? iter2.next() : null;
+
+        while (term1 != null && term2 != null) {
+            if (term1.getPower() > term2.getPower()) {
+                result.termList.add(term1);
+                term1 = iter1.hasNext() ? iter1.next() : null;
+            }
+
+            if (term2.getPower() > term1.getPower()){
+                
+            }
+        }
+
         return null; // to be removed if necessary
     }
 
@@ -233,6 +331,8 @@ public class ListPolynomial extends AbstractPolynomial {
         /**
          * Complete the code for homework
          */
+
+        //Use list iterator
         return null; // to be removed if necessary
     }
 
