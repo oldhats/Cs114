@@ -2,6 +2,9 @@ package edu.njit.cs114;
 
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * Class that solves maze problems with backtracking.
@@ -21,13 +24,37 @@ public class Maze {
 
     private int cnt;
 
+    private static class Cell {
+        public final int col, row;
+        public Cell(int col, int row) {
+            this.col = col;
+            this.row = row;
+        }
+        public boolean equals(Object obj) {
+            if (!(obj instanceof Cell)) {
+                return false;
+            }
+            Cell other = (Cell) obj;
+            return this.row == other.row && this.col == other.col;
+        }
+
+        public String toString() {
+            return "(" + col + "," + row + ")";
+        }
+    }
+
+    private static boolean inStack(Stack<Cell> pathStack, int col, int row) {
+        Cell target = new Cell(col, row);
+        return pathStack.contains(target);
+    }
+
     public Maze(TwoDimGrid m) {
         maze = m;
     }
 
     /** Wrapper method. */
     public boolean findMazePath(int startCol, int startRow, int destCol, int destRow) {
-//        cnt = 0; // keeps track of order of cell visits
+        cnt = 0; // keeps track of order of cell visits
         return findMazePathAux(startCol, startRow, destCol, destRow);
     }
 
@@ -55,62 +82,124 @@ public class Maze {
             // no path from (x,y) to destination
             return false;
         }
+        return true;
+    }
 
-        // checks if cell is destination cell if so adds 1 to the count and sets the label to the count also colors the cell with PATH
-        if ((x == destCol) && (y == destRow)) {
-            cnt += 1;
-            maze.setLabel(x,y,""+cnt);
-            maze.recolor(x, y, PATH);
+    /* Wrapper method for finding shortest path **/
+    public boolean findMazeShortestPath(int startCol, int startRow, int destCol, int destRow) {
+        Stack<Cell> pathStack = new Stack<>();
+        pathStack.push(new Cell(startCol,startRow));
+        ArrayList<Cell> shortestPath = findMazeShortestPathAux(startCol, startRow,
+                destCol, destRow, pathStack);
+        if (!shortestPath.isEmpty()) {
+            /**
+             * TO BE COMPLETED (color shortest path green with labels indicating
+             *    the order of cells in this path)
+             */
+            int cnt = 0;
+
+            for(Cell cell: shortestPath){
+                cnt++;
+                String label = String.valueOf(cnt);
+                maze.recolor(cell.col,cell.row,PATH);
+                maze.setLabel(cell.col,cell.row, label);
+            }
+
+
             return true;
-        }
-
-
-        // check if this cell has been visited before
-        if (maze.getColor(x,y) == TEMPORARY || maze.getColor(x,y) == BACKGROUND) {
+        } else {
             return false;
         }
+    }
 
-        //adds 1 to the count and sets the label to the count also colors the cell with TEMPORARY
-        cnt+= 1;
-        maze.setLabel(x,y,""+cnt);
-        maze.recolor(x, y, TEMPORARY);
-
-        // checks if there is a path from the current cell to the destination cell by checking neighboring cells
-        if (findMazePath(x - 1, y, destCol, destRow) ||
-                findMazePath(x + 1, y, destCol, destRow) ||
-                findMazePath(x, y - 1, destCol, destRow) ||
-                findMazePath(x, y + 1, destCol,destRow)) {
-            maze.recolor(x, y, PATH);
-            return true;
+    /**
+     * Attempts to find shortest path through point (x, y).
+     *
+     * @pre Possible path cells are initially in NON_BACKGROUND color
+     * @post If a path is found, all cells on it are set to the PATH color; all
+     *       cells that were visited but are not on the path are in the TEMPORARY
+     *       color.
+     * @param x
+     *            The x-coordinate of current point
+     * @param y
+     *            The y-coordinate of current point
+     * @param pathStack
+     *            Stack that contains the current path found so far
+     * @return If a path through (x, y) is found return shortest path; otherwise, return empty path
+     */
+    public ArrayList<Cell> findMazeShortestPathAux(int x, int y, int destCol, int destRow,
+                                                   Stack<Cell> pathStack) {
+        if (y >= maze.getNRows() || x >= maze.getNCols() || x < 0 || y < 0 ||
+                maze.getColor(x, y) == BACKGROUND) {
+            return new ArrayList<>();
         }
-
-
-
-
-
-
-        /*
-         * To BE COMPLETED (base and recursion cases)
-         *
-         * check if (x,y) is (destCol,destRow),color (x,y) with PATH (use maze.recolor()),
-         * also label the cell with the next cnt values (increment cnt, maze.setLabel(x,y, ""+cnt)
-         * and return true
-         *
-         * if (x,y) is colored TEMPORARY or BACKGROUND (use method maze.getColor()), return false
-         *
-         * color (x,y) with TEMPORARY (do before recursive call) also must set label with next cnt value
-         *
-         * make a recursive call findMazePathAux() to find if there is a path from (x-1,y) to destination
-         * and check the result, if it is true, return true after changing color of (x-1,y) to PATH
-         * if it is false, try other neighbors (x+1,y), (x,y-1), and (x,y+1) the same way
-         *
-         * return false if all recursive calls return false
-         *
-         *
+        /**
+         * TO BE COMPLETED (base case)
          */
 
-        return false;
+        if (x == destCol && y == destRow) {
+            return new ArrayList<>(pathStack);
+        }
+
+        maze.recolor(x, y, TEMPORARY);
+        ArrayList<Cell> shortestPath = new ArrayList<>();
+        /**
+         * To BE COMPLETED (recursion cases)
+         */
+
+
+        if (!inStack(pathStack,x+1, y)) {
+            pathStack.push(new Cell (x+1,y));
+            ArrayList<Cell> neighborShortestPath = findMazeShortestPathAux(x+1,y,destCol,destRow,pathStack);
+            if (!neighborShortestPath.isEmpty()) {
+                if (shortestPath.isEmpty() || (shortestPath.size() > neighborShortestPath.size())){
+                    shortestPath = neighborShortestPath;
+
+                }
+            }
+            pathStack.pop();
+        }
+
+        if (!inStack(pathStack,x-1, y)) {
+            pathStack.push(new Cell (x-1,y));
+            ArrayList<Cell> neighborShortestPath = findMazeShortestPathAux(x-1,y,destCol,destRow,pathStack);
+            if (!neighborShortestPath.isEmpty()) {
+                if (shortestPath.isEmpty() || (shortestPath.size() > neighborShortestPath.size())){
+                    shortestPath = neighborShortestPath;
+
+                }
+            }
+            pathStack.pop();
+        }
+
+        if (!inStack(pathStack,x, y + 1)) {
+            pathStack.push(new Cell (x,y + 1));
+            ArrayList<Cell> neighborShortestPath = findMazeShortestPathAux(x,y + 1,destCol,destRow,pathStack);
+            if (!neighborShortestPath.isEmpty()) {
+                if (shortestPath.isEmpty() || (shortestPath.size() > neighborShortestPath.size())){
+                    shortestPath = neighborShortestPath;
+
+                }
+            }
+            pathStack.pop();
+        }
+
+        if (!inStack(pathStack,x, y - 1)) {
+            pathStack.push(new Cell (x,y - 1));
+            ArrayList<Cell> neighborShortestPath = findMazeShortestPathAux(x,y - 1,destCol,destRow,pathStack);
+            if (!neighborShortestPath.isEmpty()) {
+                if (shortestPath.isEmpty() || (shortestPath.size() > neighborShortestPath.size())){
+                    shortestPath = neighborShortestPath;
+
+                }
+            }
+            pathStack.pop();
+        }
+
+        return shortestPath;
+
     }
+
 
     public void resetTemp() {
         maze.recolor(TEMPORARY, BACKGROUND);
