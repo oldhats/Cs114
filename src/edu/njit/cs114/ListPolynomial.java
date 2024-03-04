@@ -177,6 +177,7 @@ public class ListPolynomial extends AbstractPolynomial {
                 return;
             }
 
+
         }
         PolynomialTerm newTerm = new PolynomialTerm( coefficient, power);
 
@@ -246,20 +247,6 @@ public class ListPolynomial extends AbstractPolynomial {
          * Complete the code for homework
          */
 
-/*        int index = 0;
-        double result = 0;
-        double power = 0;
-        double coefficient = 0;
-
-        for (PolynomialTerm term: termList) {
-            double pointRaisedToPower = 0;
-            for(int i = 0; i < point; i++){
-                pointRaisedToPower *= point;
-            }
-            power = term.getPower();
-            coefficient = term.getCoefficient();
-            result = result + ((pointRaisedToPower)*(coefficient));
-        }*/
 
         // Create a descending iterator
         Iterator<PolynomialTerm> polyIter = ((LinkedList) termList).descendingIterator();
@@ -299,26 +286,9 @@ public class ListPolynomial extends AbstractPolynomial {
          * Complete the code for homework
          */
 
-        ListPolynomial result = new ListPolynomial();
 
-        Iterator<PolynomialTerm> iter1 = this.getIterator();
-        Iterator<PolynomialTerm> iter2 = p.getIterator();
 
-        PolynomialTerm term1 = iter1.hasNext() ? iter1.next() : null;
-        PolynomialTerm term2 = iter2.hasNext() ? iter2.next() : null;
-
-        while (term1 != null && term2 != null) {
-            if (term1.getPower() > term2.getPower()) {
-                result.termList.add(term1);
-                term1 = iter1.hasNext() ? iter1.next() : null;
-            }
-
-            if (term2.getPower() > term1.getPower()){
-                
-            }
-        }
-
-        return null; // to be removed if necessary
+        return addOrSubtract(p,true); // to be removed if necessary
     }
 
     /**
@@ -332,8 +302,71 @@ public class ListPolynomial extends AbstractPolynomial {
          * Complete the code for homework
          */
 
+
         //Use list iterator
-        return null; // to be removed if necessary
+        return addOrSubtract(p,false);  // to be removed if necessary
+    }
+
+
+    Polynomial addOrSubtract(Polynomial p, boolean add) {
+
+        // initialize list result to an empty listPolynomial
+        ListPolynomial result = new ListPolynomial();
+
+        // Iterators for polynomial and polynomial p
+        Iterator<PolynomialTerm> iter1 = this.getIterator();
+        Iterator<PolynomialTerm> iter2 = p.getIterator();
+
+        // Initialize vars for current term if it exists else give term null value
+        PolynomialTerm term1 = iter1.hasNext() ? iter1.next() : null;
+        PolynomialTerm term2 = iter2.hasNext() ? iter2.next() : null;
+
+        while (term1 != null && term2 != null) {
+            if (term1.getPower() > term2.getPower()) {
+                result.termList.add(term1);
+                term1 = iter1.hasNext() ? iter1.next() : null;
+            }
+
+            // If term2's power is larger than term1's
+            // and add is true adds term2 to result else adds negative value of term2 to result
+             else if (term2.getPower() > term1.getPower()) {
+                PolynomialTerm termToAdd = add ? term2 : new PolynomialTerm(-term2.getCoefficient(), term2.getPower());
+                result.termList.add(termToAdd);
+                term2 = iter2.hasNext() ? iter2.next() : null;
+                }
+
+                // If term1 and term2 powers same and add is true
+                // adds coefficients together else subtracts them
+                else if (term1.getPower() == term2.getPower()) {
+                    double newCoeff = add ? term1.getCoefficient() + term2.getCoefficient()
+                            : term1.getCoefficient() - term2.getCoefficient();
+
+                    if (newCoeff != 0){
+                        result.termList.add(new PolynomialTerm(newCoeff, term1.getPower()));
+                    }
+                    term1 = iter1.hasNext() ? iter1.next() : null;
+                    term2 = iter2.hasNext() ? iter2.next() : null;
+                }
+            }
+
+
+
+
+        //While loop to add remaining terms of this polynomial
+        while (term1 != null) {
+            result.termList.add(term1);
+            term1 = iter1.hasNext() ? iter1.next() : null;
+        }
+
+        //While loop to add remaining terms of this polynomial
+        while (term2 != null){
+            PolynomialTerm term2Add = add ? term2 : new PolynomialTerm(-term2.getCoefficient(), term2.getPower());
+            result.termList.add(term2Add);
+             term2 = iter2.hasNext() ? iter2.next() : null;
+        }
+
+        return result;
+
     }
 
     /**
@@ -358,6 +391,37 @@ public class ListPolynomial extends AbstractPolynomial {
         return quotient; // to be removed if necessary
     }
 
+Polynomial multiplyOrDivide (Polynomial p, boolean divide) {
+    // initialize list result to an empty listPolynomial
+    ListPolynomial result = new ListPolynomial();
+
+    // Iterators for polynomial and polynomial p
+    Iterator<PolynomialTerm> iter1 = this.getIterator();
+    Iterator<PolynomialTerm> iter2 = p.getIterator();
+
+    // Initialize vars for current term if it exists else give term null value
+    PolynomialTerm term1 = iter1.hasNext() ? iter1.next() : null;
+    PolynomialTerm term2 = iter2.hasNext() ? iter2.next() : null;
+
+    while (term1 != null) {
+        while (term2 != null) {
+            int newPower = term1.getPower() + term2.getPower();
+            double newCoeff = divide ? term1.getCoefficient() / term2.getCoefficient()
+                    : term1.getCoefficient() * term2.getCoefficient();
+            try {
+                result.addTerm(newPower, newCoeff);
+            } catch (Exception e) {
+                // Should not happen
+                e.printStackTrace();
+            }
+            term2 = iter2.hasNext() ? iter2.next() : null;
+        }
+        term1 = iter1.hasNext() ? iter1.next() : null;
+    }
+
+    return result;
+}
+
     @Override
     // Extra credit
     public Polynomial compose(Polynomial p) {
@@ -365,6 +429,9 @@ public class ListPolynomial extends AbstractPolynomial {
         /**
          * Complete code here for homework extra-credit
          */
+
+
+
         return result;
     }
 
