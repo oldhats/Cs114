@@ -69,27 +69,36 @@ public class ExpressionEvaluator {
 
         Stack<OperatorToken> operStack = new Stack<>();
 
-        for (ExpressionToken tok: infixExpr) {
+        for (ExpressionToken tok : infixExpr) {
             if (tok instanceof OperandToken) {
                 postfix.add(tok);
             } else {
                 OperatorToken tokToOp = (OperatorToken) tok;
-                if (operStack.isEmpty()) {
+                if (tokToOp == OperatorToken.OPENPAR) {
                     operStack.push(tokToOp);
+                } else if (tokToOp == OperatorToken.CLOSEDPAR) {
+                    while (!operStack.isEmpty() && operStack.peek() != OperatorToken.OPENPAR) {
+                        postfix.add(operStack.pop());
+                    }
+                    if (!operStack.isEmpty()) {
+                        operStack.pop(); // Pop the open parenthesis
+                    } else {
+                        throw new Exception("Mismatched parentheses");
+                    }
                 } else {
-                    OperatorToken topOfStackOp = operStack.peek();
-                    while (!tokToOp.precedes(topOfStackOp)) {
-                        topOfStackOp = operStack.pop();
-                        postfix.add(topOfStackOp);
-                        if (!operStack.isEmpty()) {
-                            topOfStackOp = operStack.peek();
-                        } else {
-                            break;
-                        }
+                    while (!operStack.isEmpty() && !tokToOp.precedes(operStack.peek())) {
+                        postfix.add(operStack.pop());
                     }
                     operStack.push(tokToOp);
                 }
             }
+        }
+
+        while (!operStack.isEmpty()) {
+            if (operStack.peek() == OperatorToken.OPENPAR) {
+                throw new Exception("Mismatched parentheses");
+            }
+            postfix.add(operStack.pop());
         }
 
         // if (opTok = OperToken.OPENPAR)
@@ -97,9 +106,8 @@ public class ExpressionEvaluator {
         // when you see a closed parenthesis pop
         // everything in stack until you see open parenthesis
         // but when you see open parenthesis push to stack
-
-
-        return null; // to be removed iof necessary
+        
+        return postfix;
     }
 
     /**
@@ -115,7 +123,23 @@ public class ExpressionEvaluator {
          * Complete this code for lab
          * After completing the code here, remove the following return statement
          */
-        return 0; // to be removed if necessary
+        Stack<Double> operandStack = new Stack<>();
+        for (ExpressionToken tok : postfixExpr) {
+            if (tok instanceof OperandToken) {
+                operandStack.push(((OperandToken) tok).getValue());
+            } else {
+                if (operandStack.size() < 2) {
+                    throw new Exception("Insufficient number of operands");
+                }
+                double op2 = operandStack.pop();
+                double op1 = operandStack.pop();
+                operandStack.push(applyOp((OperatorToken) tok, op1, op2));
+            }
+        }
+        if (operandStack.size() != 1) {
+            throw new Exception("Insufficient number of operators");
+        }
+        return operandStack.pop();
     }
 
     /**
