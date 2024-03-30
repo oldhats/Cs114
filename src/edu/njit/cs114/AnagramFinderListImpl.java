@@ -27,8 +27,17 @@ public class AnagramFinderListImpl extends AbstractAnagramFinder {
              * To be completed
              * Compare charArr already sorted using Arrays.equals() method
              */
-              return Arrays.equals(wordArrPair.charArr,charArr); // to be removed once function is completed.
+
+            // Create a copy of the character array from the provided WordChArrPair
+            char[] sortedWordArrPair = Arrays.copyOf(wordArrPair.charArr, wordArrPair.charArr.length);
+            // Sort the copied character array
+            Arrays.sort(sortedWordArrPair);
+
+            // Compare the sorted character arrays
+            // If they are equal, the words are anagrams
+            return Arrays.equals(sortedWordArrPair, charArr);
         }
+
 
         @Override
         public int compareTo(WordChArrPair wordArrPair) {
@@ -63,17 +72,56 @@ public class AnagramFinderListImpl extends AbstractAnagramFinder {
 
     @Override
     public List<List<String>> getMostAnagrams() {
+        // Create a new list to store WordChArrPair objects and sort it
         List<WordChArrPair> wordArrPairList = new ArrayList<>(wordChArrPairList);
         Collections.sort(wordArrPairList);
-        ArrayList<List<String>> mostAnagramsList = new ArrayList<>();
-        /**
-         * To be completed
-         *  Note : use isAnagram()method of WordArrPair to identify an anagram
-         */
 
+        // Create a list to store groups of anagram words with the most anagrams
+        List<List<String>> mostAnagramsList = new ArrayList<>();
 
+        // Initialize the maximum size of an anagram group
+        int maxAnagramSize = 0;
+
+        // Repeat until wordArrPairList is empty
+        while (!wordArrPairList.isEmpty()) {
+            // Get and remove the first element from the list
+            WordChArrPair firstElem = wordArrPairList.remove(0);
+
+            // Create a new list to store anagrams of the first element
+            List<String> anagramList = new ArrayList<>();
+            // Add the first element to the anagram list
+            anagramList.add(firstElem.toString());
+
+            // Iterate over the remaining elements in the list
+            Iterator<WordChArrPair> iterator = wordArrPairList.iterator();
+            while (iterator.hasNext()) {
+                WordChArrPair currentPair = iterator.next();
+                // If the current element is an anagram of the first element
+                if (firstElem.isAnagram(currentPair)) {
+                    // Add it to the anagram list and remove it from wordArrPairList
+                    anagramList.add(currentPair.toString());
+                    iterator.remove();
+                }
+            }
+
+            // Update the maximum size of an anagram group
+            if (anagramList.size() > maxAnagramSize) {
+                // If the current anagram list is larger, clear the mostAnagramsList
+                mostAnagramsList.clear();
+                // Add the new anagram list to the mostAnagramsList
+                mostAnagramsList.add(anagramList);
+                // Update the maximum anagram size
+                maxAnagramSize = anagramList.size();
+            } else if (anagramList.size() == maxAnagramSize) {
+                // If the size is the same, add the anagram list to the mostAnagramsList
+                mostAnagramsList.add(anagramList);
+            }
+        }
+
+        // Return the list of groups with the most anagrams
         return mostAnagramsList;
     }
+
 
     public static void main(String [] args) {
         AnagramFinderListImpl finder = new AnagramFinderListImpl();

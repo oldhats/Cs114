@@ -66,30 +66,28 @@ public class AnagramFinderHashTableImpl extends AbstractAnagramFinder {
 
     /**
      * Add the word to the anagram table using hash code
-     * @param word
+     * @param word The word to add
      */
     @Override
     public void addWord(String word) {
-        /**
-         * To be completed
-         * Use myHashCode to construct the key and add word to the anagram table
-         */
-
         // Get the key for the word
         Long key = myHashCode(word);
+
+        // Get the list of words associated with the key from the anagram table
         ArrayList<String> wordList = anagramTable.get(key);
 
-
-        // If the key is not in the table, add it
+        // If the key is not in the table, create a new list and put it in the table
         if (wordList == null) {
-            ArrayList<String> newWordList = new ArrayList<>();
-            anagramTable.put(key,newWordList);
+            wordList = new ArrayList<>();
+            anagramTable.put(key, wordList);
         }
 
-        // Add the word to the list of words with the same key
-        anagramTable.get(key).add(word);
-
+        // Add the word to the list of words with the same key if it's not already present
+        if (!wordList.contains(word)) {
+            wordList.add(word);
+        }
     }
+
 
     @Override
     public void clear() {
@@ -113,15 +111,17 @@ public class AnagramFinderHashTableImpl extends AbstractAnagramFinder {
 
         // Find the maximum number of anagrams
         for (ArrayList<String> anagramWordList : anagramTable.values()){
-            if(anagramWordList.size() > maxAnagramListSize) {
-            maxAnagramListSize = anagramWordList.size();
+            int currentAnagramListSize = anagramWordList.size();
+            if(currentAnagramListSize > maxAnagramListSize) {
+            maxAnagramListSize = currentAnagramListSize;
+
             }
         }
 
         // Add all the lists with the maximum number of anagrams to the mostAnagramsList
-        for (ArrayList<String> anagramWordList : anagramTable.values()) {
+        for (List<String> anagramWordList : anagramTable.values()) {
             if (anagramWordList.size() == maxAnagramListSize) {
-                mostAnagramsList.add(anagramWordList);
+                mostAnagramsList.add(new ArrayList<>(anagramWordList));
             }
         }
 
