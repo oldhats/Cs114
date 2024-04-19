@@ -219,15 +219,14 @@ public class HuffmanTreeCoder {
              * If it is leaf, append character to builder and reset node to root
              */
 
-            // iterate through the characters read
             for (int i = 0; i < nCharsRead; i++) {
-                if (buf[i] == '0') { // if the character is 0, set the node to the left child
+                if (buf[i] == '0') {
                     node = node.left;
-                } else if (buf[i] == '1') { // if the character is 1, set the node to the right child
+                } else if (buf[i] == '1') {
                     node = node.right;
                 }
 
-                if (node.isLeaf()) { // if the node is a leaf, append the character to the builder and reset the node to the root
+                if (node.isLeaf()) {
                     builder.append(node.getChar());
                     node = root;
                 }
@@ -238,19 +237,18 @@ public class HuffmanTreeCoder {
 
     }
 
-    // Decode a bit string
     private int decodeBitString(HuffmanTreeNode node, String bitString,
             int bitStringIndex, StringBuilder decodedString) {
 
-
-        if (node.isLeaf()) { // if the node is a leaf, append the character to the decoded string
+        if (node.isLeaf()) {
             decodedString.append(node.getChar());
             return bitStringIndex;
-        } else { // if the node is not a leaf, check the bit string character
+        } else {
             if (bitString.charAt(bitStringIndex) == '0') {
                 return decodeBitString(node.left, bitString, bitStringIndex + 1, decodedString);
             }
-            if (bitString.charAt(bitStringIndex) == '1') { // if the bit string character is 1, set the node to the right child
+
+            if (bitString.charAt(bitStringIndex) == '1') {
                 return decodeBitString(node.right, bitString, bitStringIndex + 1, decodedString);
             }
         }
@@ -270,15 +268,15 @@ public class HuffmanTreeCoder {
          * Complete code for homework assignment
          */
 
-        StringBuilder decodedString = new StringBuilder(); // create a string builder to store the decoded string
+        StringBuilder decodedString = new StringBuilder();
 
-        int bitStrIndex = 0; // initialize the bit string index to 0
+        int bitStrIndex = 0;
 
-        while (bitStrIndex < code.length()){ // iterate through the bit string
-            bitStrIndex = decodeBitString(root, code, bitStrIndex, decodedString); // decode the bit string
+        while (bitStrIndex < code.length()){
+            bitStrIndex = decodeBitString(root, code, bitStrIndex, decodedString);
         }
 
-        return decodedString.toString(); // return the decoded string
+        return decodedString.toString();
     }
 
 
